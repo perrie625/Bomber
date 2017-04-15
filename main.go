@@ -4,6 +4,7 @@ import (
 	"net"
 	"log"
 	"os"
+	"bufio"
 )
 
 var AgentMap map[string] *Agent
@@ -27,6 +28,16 @@ func NewAgent(conn *net.Conn) *Agent {
 func agentHandler(agent *Agent) {
 	defer agent.Close()
 	log.Println(agent.remoteAddr, " connects.")
+
+	reader := bufio.NewReader(*agent.conn)
+	for {
+		msg, err := reader.ReadString('\n')
+		if err != nil {
+			return
+		}
+		log.Print(agent.remoteAddr, "says: ", msg)
+	}
+
 }
 
 
