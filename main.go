@@ -15,6 +15,9 @@ func connHandler(connection net.Conn) {
 func main()  {
 
 	ln, err := net.Listen("tcp", ":8080")
+
+	defer ln.Close()
+
 	if err != nil {
 		log.Println("Listen failed.")
 		os.Exit(1)
