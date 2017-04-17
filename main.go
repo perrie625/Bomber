@@ -5,37 +5,22 @@ import (
 	"log"
 	"os"
 	"bufio"
+	agentModel "Bomber/agent"
 )
 
-var AgentMap map[string] *Agent
+var AgentMap map[string] *agentModel.Agent
 
-type Agent struct {
-	conn *net.TCPConn
-	remoteAddr string
-}
-
-func (agent *Agent) Close() {
-	(*agent.conn).Close()
-}
-
-func NewAgent(conn *net.TCPConn) *Agent {
-	return &Agent{
-		conn: conn,
-		remoteAddr: (*conn).RemoteAddr().String(),
-	}
-}
-
-func agentHandler(agent *Agent) {
+func agentHandler(agent *agentModel.Agent) {
 	defer agent.Close()
-	log.Println(agent.remoteAddr, " connects.")
+	log.Println(agent.RemoteAddr, " connects.")
 
-	reader := bufio.NewReader(*agent.conn)
+	reader := bufio.NewReader(*agent.Conn)
 	for {
 		msg, err := reader.ReadString('\n')
 		if err != nil {
 			return
 		}
-		log.Print(agent.remoteAddr, "says: ", msg)
+		log.Print(agent.RemoteAddr, "says: ", msg)
 	}
 
 }
@@ -46,7 +31,7 @@ func main()  {
 	ln, err := net.ListenTCP("tcp", tcpAddr)
 	defer ln.Close()
 
-	AgentMap = make(map[string] *Agent)
+	AgentMap = make(map[string] *agentModel.Agent)
 
 	if err != nil {
 		log.Println("Listen failed.")
@@ -59,8 +44,8 @@ func main()  {
 			conn.Close()
 			continue
 		}
-		agent := NewAgent(conn)
-		AgentMap[agent.remoteAddr] = agent
+		agent := agentModel.NewAgent(conn)
+		AgentMap[agent.RemoteAddr] = agent
 
 		go agentHandler(agent)
 	}
