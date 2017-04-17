@@ -10,7 +10,7 @@ import (
 var AgentMap map[string] *Agent
 
 type Agent struct {
-	conn *net.Conn
+	conn *net.TCPConn
 	remoteAddr string
 }
 
@@ -18,7 +18,7 @@ func (agent *Agent) Close() {
 	(*agent.conn).Close()
 }
 
-func NewAgent(conn *net.Conn) *Agent {
+func NewAgent(conn *net.TCPConn) *Agent {
 	return &Agent{
 		conn: conn,
 		remoteAddr: (*conn).RemoteAddr().String(),
@@ -42,8 +42,8 @@ func agentHandler(agent *Agent) {
 
 
 func main()  {
-
-	ln, err := net.Listen("tcp", ":8080")
+	tcpAddr, _ := net.ResolveTCPAddr("tcp", "127.0.0.1:8080")
+	ln, err := net.ListenTCP("tcp", tcpAddr)
 	defer ln.Close()
 
 	AgentMap = make(map[string] *Agent)
@@ -54,12 +54,12 @@ func main()  {
 	}
 	log.Println("Listen on 8080.")
 	for {
-		conn, err := ln.Accept()
+		conn, err := ln.AcceptTCP()
 		if err != nil {
 			conn.Close()
 			continue
 		}
-		agent := NewAgent(&conn)
+		agent := NewAgent(conn)
 		AgentMap[agent.remoteAddr] = agent
 
 		go agentHandler(agent)
