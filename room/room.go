@@ -30,8 +30,11 @@ func (room *Room) Destroy(){
 
 }
 
-func (room *Room) BroadCast(string){
-
+func (room *Room) BroadCast(message string){
+	b := []byte(message)
+	for a := range room.agentMap {
+		a.Conn.Write(b)
+	}
 }
 
 

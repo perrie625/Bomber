@@ -4,6 +4,7 @@ import (
 	"net"
 	"log"
 	"reflect"
+	"bufio"
 )
 
 type room interface {
@@ -20,13 +21,30 @@ type Agent struct {
 
 func (agent *Agent) Close() {
 	log.Println(agent.RemoteAddr, " disconnect")
+	agent.ExitRoom()
 	agent.Conn.Close()
 }
 
+
+func (agent *Agent) Run(){
+	defer func(){
+		agent.Close()
+	}()
+	log.Println(agent.RemoteAddr, " connected.")
+
+	reader := bufio.NewReader(agent.Conn)
+	for {
+		msg, err := reader.ReadString('\n')
+		if err != nil {
+			return
+		}
+		go agent.room.BroadCast(msg)
+	}
+}
+
+
 func (agent *Agent) EntryRoom(room room) {
 	agent.room = room
-	log.Println(reflect.TypeOf(room))
-	log.Println(reflect.TypeOf(agent.room))
 	room.AddAgent(agent)
 }
 

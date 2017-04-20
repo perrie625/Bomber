@@ -4,28 +4,9 @@ import (
 	"net"
 	"log"
 	"os"
-	"bufio"
 	agentModel "Bomber/agent"
 	"Bomber/room"
 )
-
-func agentHandler(agent *agentModel.Agent) {
-	defer func(){
-		room.MainRoom.RemoveAgent(agent)
-		agent.Close()
-	}()
-	log.Println(agent.RemoteAddr, " connects.")
-
-	reader := bufio.NewReader(agent.Conn)
-	for {
-		msg, err := reader.ReadString('\n')
-		if err != nil {
-			return
-		}
-		log.Print(agent.RemoteAddr, " says: ", msg)
-	}
-
-}
 
 
 func main()  {
@@ -47,7 +28,7 @@ func main()  {
 		agent := agentModel.NewAgent(conn)
 		agent.EntryRoom(room.MainRoom)
 
-		go agentHandler(agent)
+		go agent.Run()
 	}
 
 }
