@@ -3,7 +3,6 @@ package agent
 import (
 	"net"
 	"log"
-	"reflect"
 	"bufio"
 )
 
