@@ -30,7 +30,7 @@ func (room *Room) Destroy(){
 
 }
 
-func (room *Room) broadcast(){
+func (room *Room) BroadCast(string){
 
 }
 

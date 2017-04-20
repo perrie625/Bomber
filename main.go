@@ -45,7 +45,7 @@ func main()  {
 			continue
 		}
 		agent := agentModel.NewAgent(conn)
-		room.MainRoom.AddAgent(agent)
+		agent.EntryRoom(room.MainRoom)
 
 		go agentHandler(agent)
 	}
