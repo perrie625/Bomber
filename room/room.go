@@ -29,6 +29,11 @@ func (room *Room) Destroy(){
 
 }
 
+func (room *Room) broadcast(){
+
+}
+
+
 func NewRoom() *Room {
 	return &Room{}
 }
