@@ -6,12 +6,14 @@ import (
 	"os"
 	"bufio"
 	agentModel "Bomber/agent"
+	"Bomber/room"
 )
 
-var AgentMap map[string] *agentModel.Agent
-
 func agentHandler(agent *agentModel.Agent) {
-	defer agent.Close()
+	defer func(){
+		room.MainRoom.RemoveAgent(agent)
+		agent.Close()
+	}()
 	log.Println(agent.RemoteAddr, " connects.")
 
 	reader := bufio.NewReader(agent.Conn)
@@ -20,7 +22,7 @@ func agentHandler(agent *agentModel.Agent) {
 		if err != nil {
 			return
 		}
-		log.Print(agent.RemoteAddr, "says: ", msg)
+		log.Print(agent.RemoteAddr, " says: ", msg)
 	}
 
 }
@@ -30,8 +32,6 @@ func main()  {
 	tcpAddr, _ := net.ResolveTCPAddr("tcp", "127.0.0.1:8080")
 	ln, err := net.ListenTCP("tcp", tcpAddr)
 	defer ln.Close()
-
-	AgentMap = make(map[string] *agentModel.Agent)
 
 	if err != nil {
 		log.Println("Listen failed.")
@@ -45,7 +45,7 @@ func main()  {
 			continue
 		}
 		agent := agentModel.NewAgent(conn)
-		AgentMap[agent.RemoteAddr] = agent
+		room.MainRoom.AddAgent(agent)
 
 		go agentHandler(agent)
 	}

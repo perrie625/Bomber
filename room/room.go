@@ -1,8 +1,8 @@
 package room
 
 import (
-	"net"
 	"Bomber/agent"
+	"log"
 )
 
 var (
@@ -13,16 +13,17 @@ type Room struct {
 	roomId string
 	maxLength int32
 	entrance chan string
-	agentMap map[string] *net.TCPConn
+	agentMap map[*agent.Agent] struct{}
 }
 
-
-func (room *Room) Entry(agent agent.Agent){
-
+func (room *Room) AddAgent(agent *agent.Agent){
+	log.Println(agent.RemoteAddr, " entries.")
+	room.agentMap[agent] = struct{}{}
 }
 
-func (room *Room) Exit(agent2 agent.Agent){
-
+func (room *Room) RemoveAgent(agent *agent.Agent){
+	log.Println(agent.RemoteAddr, " exits.")
+	delete(room.agentMap, agent)
 }
 
 func (room *Room) Destroy(){
@@ -35,7 +36,11 @@ func (room *Room) broadcast(){
 
 
 func NewRoom() *Room {
-	return &Room{}
+	return &Room{
+		roomId: "main",
+		maxLength: 20,
+		agentMap: make(map[*agent.Agent] struct{}),
+	}
 }
 
 
