@@ -14,7 +14,7 @@ func agentHandler(agent *agentModel.Agent) {
 	defer agent.Close()
 	log.Println(agent.RemoteAddr, " connects.")
 
-	reader := bufio.NewReader(*agent.Conn)
+	reader := bufio.NewReader(agent.Conn)
 	for {
 		msg, err := reader.ReadString('\n')
 		if err != nil {

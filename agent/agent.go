@@ -1,6 +1,9 @@
 package agent
 
-import "net"
+import (
+	"net"
+	"log"
+)
 
 type Agent struct {
 	Conn *net.TCPConn
@@ -8,6 +11,7 @@ type Agent struct {
 }
 
 func (agent *Agent) Close() {
+	log.Println(agent.RemoteAddr, " disconnect")
 	agent.Conn.Close()
 }
 
