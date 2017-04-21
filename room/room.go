@@ -27,7 +27,9 @@ func (room *Room) RemoveAgent(agent *agent.Agent){
 }
 
 func (room *Room) Destroy(){
-
+	for a := range room.agentMap {
+		a.Close()
+	}
 }
 
 func (room *Room) BroadCast(message string){

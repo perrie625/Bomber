@@ -19,9 +19,11 @@ type Agent struct {
 }
 
 func (agent *Agent) Close() {
-	log.Println(agent.RemoteAddr, " disconnect")
 	agent.ExitRoom()
-	agent.Conn.Close()
+	err := agent.Conn.Close()
+	if err == nil {
+		log.Println(agent.RemoteAddr, " disconnect")
+	}
 }
 
 
@@ -29,8 +31,6 @@ func (agent *Agent) Run(){
 	defer func(){
 		agent.Close()
 	}()
-	log.Println(agent.RemoteAddr, " connected.")
-
 	reader := bufio.NewReader(agent.Conn)
 	for {
 		msg, err := reader.ReadString('\n')
@@ -48,13 +48,18 @@ func (agent *Agent) EntryRoom(room room) {
 }
 
 func (agent *Agent) ExitRoom() {
-	agent.room.RemoveAgent(agent)
-	agent.room = nil
+	if agent.room != nil{
+		agent.room.RemoveAgent(agent)
+		agent.room = nil
+	}
+
 }
 
 func NewAgent(conn *net.TCPConn) *Agent {
+	remoteAddr := conn.RemoteAddr().String()
+	log.Println(remoteAddr, " connected.")
 	return &Agent{
 		Conn: conn,
-		RemoteAddr: (*conn).RemoteAddr().String(),
+		RemoteAddr: remoteAddr,
 	}
 }
