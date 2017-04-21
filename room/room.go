@@ -3,6 +3,7 @@ package room
 import (
 	"Bomber/agent"
 	"log"
+	"sync"
 )
 
 var (
@@ -13,17 +14,22 @@ type Room struct {
 	roomId string
 	maxLength int32
 	entrance chan string
+	agentsRWMutex sync.RWMutex
 	agentMap map[*agent.Agent] struct{}
 }
 
 func (room *Room) AddAgent(agent *agent.Agent){
-	log.Println(agent.RemoteAddr, " entries.")
+	room.agentsRWMutex.Lock()
 	room.agentMap[agent] = struct{}{}
+	room.agentsRWMutex.Unlock()
+	log.Println(agent.RemoteAddr, " entries.")
 }
 
 func (room *Room) RemoveAgent(agent *agent.Agent){
-	log.Println(agent.RemoteAddr, " exits.")
+	room.agentsRWMutex.Lock()
 	delete(room.agentMap, agent)
+	room.agentsRWMutex.Unlock()
+	log.Println(agent.RemoteAddr, " exits.")
 }
 
 func (room *Room) Destroy(){
@@ -34,9 +40,11 @@ func (room *Room) Destroy(){
 
 func (room *Room) BroadCast(message string){
 	b := []byte(message)
+	room.agentsRWMutex.RLock()
 	for a := range room.agentMap {
 		a.Conn.Write(b)
 	}
+	room.agentsRWMutex.RUnlock()
 }
 
 
