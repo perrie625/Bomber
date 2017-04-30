@@ -6,6 +6,7 @@ import (
 	"errors"
 	"Bomber/db"
 	"gopkg.in/mgo.v2"
+	"Bomber/message"
 )
 
 var (
@@ -34,15 +35,29 @@ func (a *account)SetPassword(password string) error {
 	return nil
 }
 
+func (a *account)Create()  error {
+//	新建账号到数据库
+	session := db.Session.Clone()
+	defer session.Close()
 
-func NewAccount(username string, password string)(*account, error) {
+	c := session.DB(database).C(collection)
+	err := c.Insert(a)
+	return err
+}
+
+
+func CreateAccount(l *message.LoginRequest)(*account, error) {
 	result := &account{
-		Username: username,
+		Id: bson.NewObjectId(),
+		Username: l.Username,
+		Name: "dafultName",
 	}
-	err := result.SetPassword(password)
+	err := result.SetPassword(l.Password)
 	if err != nil {
-		return nil, errors.New("New Account Failed")
+		return nil, errors.New("Create Account Failed")
 	}
+	// todo: error handle
+	result.Create()
 	return result, nil
 }
 
