@@ -4,6 +4,8 @@ import (
 	"gopkg.in/mgo.v2/bson"
 	"golang.org/x/crypto/bcrypt"
 	"errors"
+	"Bomber/db"
+	"gopkg.in/mgo.v2"
 )
 
 var (
@@ -44,6 +46,28 @@ func NewAccount(username string, password string)(*account, error) {
 	return result, nil
 }
 
+
+func ensureIndex(){
+	session := db.Session.Clone()
+	defer session.Close()
+
+	c := session.DB(database).C(collection)
+	index := mgo.Index{
+		Key: []string{"username"},
+		Unique: true,
+		DropDups: true,
+		Background:true,
+		Sparse:true,
+	}
+	err := c.EnsureIndex(index)
+	if err != nil{
+		panic(err)
+	}
+}
+
+func init() {
+	ensureIndex()
+}
 
 //func (a *account)Create() error{
 //
