@@ -1,4 +1,4 @@
-package agent
+package gate
 
 import (
 	"net"

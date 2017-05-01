@@ -4,7 +4,7 @@ import (
 	"net"
 	"log"
 	"os"
-	agentModel "Bomber/agent"
+	Gate "Bomber/gate"
 	"Bomber/room"
 )
 
@@ -26,7 +26,7 @@ func main()  {
 			conn.Close()
 			continue
 		}
-		agent := agentModel.NewAgent(conn)
+		agent := Gate.NewAgent(conn)
 		agent.EntryRoom(room.MainRoom)
 
 		go agent.Run()

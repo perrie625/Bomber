@@ -62,6 +62,9 @@ func CreateAccount(l *message.LoginRequest)(*account, error) {
 }
 
 
+
+
+
 func ensureIndex(){
 	session := db.Session.Clone()
 	defer session.Close()
