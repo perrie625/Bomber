@@ -1,7 +1,7 @@
 package room
 
 import (
-	"Bomber/agent"
+	agent "Bomber/gate"
 	"log"
 	"sync"
 )
