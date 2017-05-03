@@ -1,0 +1,16 @@
+syntax = "proto3";
+package protodata;
+import "protodata/flags.proto";
+
+
+message LoginRequest {
+    int msgId = 1;
+    string username = 2;
+    string password = 3;
+}
+
+message LoginResponse {
+    uint32 msgId = 1;
+    protodata.FlagNum flag = 2;
+    string desc = 3;
+}

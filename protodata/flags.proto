@@ -1,0 +1,10 @@
+syntax = "proto3";
+package protodata;
+
+
+message FlagNum{
+    enum Flag{
+        eUnknown=0;
+        eNoUser=1;
+    }
+}
