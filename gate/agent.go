@@ -4,6 +4,7 @@ import (
 	"net"
 	"log"
 	"bufio"
+	"Bomber/network"
 )
 
 type room interface {
@@ -15,6 +16,7 @@ type room interface {
 type Agent struct {
 	Conn *net.TCPConn
 	RemoteAddr string
+	msgParser *network.MsgParser
 	room room
 }
 
@@ -61,5 +63,6 @@ func NewAgent(conn *net.TCPConn) *Agent {
 	return &Agent{
 		Conn: conn,
 		RemoteAddr: remoteAddr,
+		msgParser: network.NewMsgParser(conn),
 	}
 }

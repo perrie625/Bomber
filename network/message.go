@@ -15,11 +15,11 @@ type MsgParser struct {
 	msgLenNum    uint16
 	msgIdLen     uint16
 	littleEndian bool
-	reader net.Conn
+	reader *net.TCPConn
 }
 
 
-func NewMsgParser(con net.TCPConn) *MsgParser {
+func NewMsgParser(con *net.TCPConn) *MsgParser {
 	p := &MsgParser{
 		msgLenNum:    2,
 		msgIdLen:     2,
