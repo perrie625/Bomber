@@ -6,7 +6,7 @@ import (
 	"errors"
 	"Bomber/db"
 	"gopkg.in/mgo.v2"
-	"Bomber/message"
+	"Bomber/protodata"
 )
 
 var (
@@ -46,7 +46,7 @@ func (a *account)Create()  error {
 }
 
 
-func CreateAccount(l *message.LoginRequest)(*account, error) {
+func CreateAccount(l *protodata.LoginRequest)(*account, error) {
 	result := &account{
 		Id: bson.NewObjectId(),
 		Username: l.Username,
