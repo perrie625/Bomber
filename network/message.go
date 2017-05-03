@@ -32,12 +32,12 @@ func NewMsgParser(con *net.TCPConn) *MsgParser {
 
 func (parser *MsgParser) GetMsgId() (uint32, error) {
 	// 用来获取消息的msgId
-
+	var r uint32
 	// 判断消息长度
 	var l [4]byte
 	msgIdBuf := l[:parser.msgIdLen]
 	if _, err := io.ReadFull(parser.reader, msgIdBuf); err != nil {
-		return nil, err
+		return r, err
 	}
 
 	// 解析msgID
@@ -54,11 +54,12 @@ func (parser *MsgParser) GetMsgId() (uint32, error) {
 func (parser *MsgParser) GetMsgLen() (uint16, error) {
 	// 用来获取消息结构的长度
 
+	var r uint16
 	// 判断消息长度
 	var l [2]byte
 	msgIdBuf := l[:parser.msgLenNum]
 	if _, err := io.ReadFull(parser.reader, msgIdBuf); err != nil {
-		return nil, err
+		return r, err
 	}
 
 	// 解析msgLen
