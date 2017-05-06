@@ -3,8 +3,9 @@ package gate
 import (
 	"net"
 	"log"
-	"bufio"
 	"Bomber/network"
+	"Bomber/protodata"
+	"github.com/golang/protobuf/proto"
 )
 
 type room interface {
@@ -33,14 +34,26 @@ func (agent *Agent) Run(){
 	defer func(){
 		agent.Close()
 	}()
-	reader := bufio.NewReader(agent.Conn)
 	for {
-		msg, err := reader.ReadString('\n')
+		// 待完善
+		// 只是单纯实现了proto接收，然后广播字符串
+		msgId, err := agent.msgParser.GetMsgId()
+		log.Println(msgId)
 		if err != nil {
 			return
 		}
-		go agent.Room.BroadCast(msg)
+		msgData, err := agent.msgParser.GetMsgData()
+		if err != nil {
+			return
+		}
+		msg := new(protodata.SayMessage)
+		_ = proto.Unmarshal(msgData, msg)
+		agent.Room.BroadCast(msg.Words + "\n")
 	}
+}
+
+func (agent *Agent) ReadMessage() {
+
 }
 
 
