@@ -19,7 +19,6 @@ func main()  {
 		os.Exit(1)
 	}
 	log.Println("Listen on 8080.")
-	count := 0
 	for {
 		conn, err := ln.AcceptTCP()
 		if err != nil {
@@ -30,7 +29,6 @@ func main()  {
 		agent.EntryRoom(room.MainRoom)
 
 		go agent.Run()
-		count ++
 
 		// destroy room test
 		//if count == 1 {
