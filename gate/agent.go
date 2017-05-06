@@ -14,10 +14,10 @@ type room interface {
 }
 
 type Agent struct {
-	Conn *net.TCPConn
+	Conn       *net.TCPConn
 	RemoteAddr string
-	msgParser *network.MsgParser
-	room room
+	msgParser  *network.MsgParser
+	Room       room
 }
 
 func (agent *Agent) Close() {
@@ -39,20 +39,20 @@ func (agent *Agent) Run(){
 		if err != nil {
 			return
 		}
-		go agent.room.BroadCast(msg)
+		go agent.Room.BroadCast(msg)
 	}
 }
 
 
 func (agent *Agent) EntryRoom(room room) {
-	agent.room = room
+	agent.Room = room
 	room.AddAgent(agent)
 }
 
 func (agent *Agent) ExitRoom() {
-	if agent.room != nil{
-		agent.room.RemoveAgent(agent)
-		agent.room = nil
+	if agent.Room != nil{
+		agent.Room.RemoveAgent(agent)
+		agent.Room = nil
 	}
 
 }
