@@ -4,6 +4,8 @@ import (
 	"io"
 	"encoding/binary"
 	"net"
+	"github.com/golang/protobuf/proto"
+	"bytes"
 )
 
 // 负责协议消息的路由和解析
@@ -105,6 +107,39 @@ func (parser *MsgParser) GetMsgData() ([]byte, error){
 	}
 
 	return msgData, nil
+}
+
+func MessageToPackage(msgId uint16, data *proto.Message) (*bytes.Buffer, error){
+	// 将消息封装成数据包
+	msgBuff, err := proto.Marshal(data)
+	if err != nil {
+		return nil, err
+	}
+	msgLen := uint16(len(msgBuff))
+	var pkg *bytes.Buffer = new(bytes.Buffer)
+	// 写入协议ID
+	err = binary.Write(pkg, binary.BigEndian, msgId)
+	if err != nil {
+		return nil, err
+	}
+
+	// 写入数据长度
+	err = binary.Write(pkg, binary.BigEndian, msgLen)
+	if err != nil {
+		return nil, err
+	}
+	// 写入消息内容
+	err = binary.Write(pkg, binary.BigEndian, msgBuff)
+	return pkg, nil
+}
+
+func WriteMessage(con *net.TCPConn, msgId uint16, data *proto.Message) {
+	// 写入数据到连接
+	pkg, err := MessageToPackage(msgId, data)
+	if err != nil {
+		// todo: error handle
+	}
+	con.Write(pkg.Bytes())
 }
 
 
