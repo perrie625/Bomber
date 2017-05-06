@@ -7,9 +7,14 @@ Package protodata is a generated protocol buffer package.
 
 It is generated from these files:
 	protodata/chat.proto
+	protodata/flags.proto
+	protodata/login.proto
 
 It has these top-level messages:
 	SayMessage
+	FlagNum
+	LoginRequest
+	LoginResponse
 */
 package protodata
 

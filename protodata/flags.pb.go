@@ -2,18 +2,6 @@
 // source: protodata/flags.proto
 // DO NOT EDIT!
 
-/*
-Package protodata is a generated protocol buffer package.
-
-It is generated from these files:
-	protodata/flags.proto
-	protodata/login.proto
-
-It has these top-level messages:
-	FlagNum
-	LoginRequest
-	LoginResponse
-*/
 package protodata
 
 import proto "github.com/golang/protobuf/proto"
@@ -24,12 +12,6 @@ import math "math"
 var _ = proto.Marshal
 var _ = fmt.Errorf
 var _ = math.Inf
-
-// This is a compile-time assertion to ensure that this generated file
-// is compatible with the proto package it is being compiled against.
-// A compilation error at this line likely means your copy of the
-// proto package needs to be updated.
-const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
 
 type FlagNum_Flag int32
 
@@ -50,7 +32,7 @@ var FlagNum_Flag_value = map[string]int32{
 func (x FlagNum_Flag) String() string {
 	return proto.EnumName(FlagNum_Flag_name, int32(x))
 }
-func (FlagNum_Flag) EnumDescriptor() ([]byte, []int) { return fileDescriptor0, []int{0, 0} }
+func (FlagNum_Flag) EnumDescriptor() ([]byte, []int) { return fileDescriptor1, []int{0, 0} }
 
 type FlagNum struct {
 }
@@ -58,16 +40,16 @@ type FlagNum struct {
 func (m *FlagNum) Reset()                    { *m = FlagNum{} }
 func (m *FlagNum) String() string            { return proto.CompactTextString(m) }
 func (*FlagNum) ProtoMessage()               {}
-func (*FlagNum) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{0} }
+func (*FlagNum) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{0} }
 
 func init() {
 	proto.RegisterType((*FlagNum)(nil), "protodata.FlagNum")
 	proto.RegisterEnum("protodata.FlagNum_Flag", FlagNum_Flag_name, FlagNum_Flag_value)
 }
 
-func init() { proto.RegisterFile("protodata/flags.proto", fileDescriptor0) }
+func init() { proto.RegisterFile("protodata/flags.proto", fileDescriptor1) }
 
-var fileDescriptor0 = []byte{
+var fileDescriptor1 = []byte{
 	// 96 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x09, 0x6e, 0x88, 0x02, 0xff, 0xe2, 0x12, 0x2d, 0x28, 0xca, 0x2f,
 	0xc9, 0x4f, 0x49, 0x2c, 0x49, 0xd4, 0x4f, 0xcb, 0x49, 0x4c, 0x2f, 0xd6, 0x03, 0xf3, 0x85, 0x38,

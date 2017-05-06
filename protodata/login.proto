@@ -4,7 +4,7 @@ import "protodata/flags.proto";
 
 
 message LoginRequest {
-    int msgId = 1;
+    uint32 msgId = 1;
     string username = 2;
     string password = 3;
 }
