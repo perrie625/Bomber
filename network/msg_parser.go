@@ -24,7 +24,7 @@ type MsgParser struct {
 func NewMsgParser(con *net.TCPConn) *MsgParser {
 	p := &MsgParser{
 		msgLenNum:    2,
-		msgIdLen:     2,
+		msgIdLen:     4,
 		littleEndian: false,
 		reader:	      con,
 	}
@@ -38,7 +38,7 @@ func (parser *MsgParser) GetMsgId() (uint32, error) {
 	// 判断消息长度
 	var l [4]byte
 	msgIdBuf := l[:parser.msgIdLen]
-	if _, err := io.ReadFull(parser.reader, msgIdBuf); err != nil {
+	if _, err := parser.reader.Read(msgIdBuf); err != nil {
 		return r, err
 	}
 
@@ -109,7 +109,7 @@ func (parser *MsgParser) GetMsgData() ([]byte, error){
 	return msgData, nil
 }
 
-func MessageToPackage(msgId uint16, data *proto.Message) (*bytes.Buffer, error){
+func MessageToPackage(msgId uint32, data proto.Message) (*bytes.Buffer, error){
 	// 将消息封装成数据包
 	msgBuff, err := proto.Marshal(data)
 	if err != nil {
@@ -133,7 +133,7 @@ func MessageToPackage(msgId uint16, data *proto.Message) (*bytes.Buffer, error){
 	return pkg, nil
 }
 
-func WriteMessage(con *net.TCPConn, msgId uint16, data *proto.Message) {
+func WriteMessage(con *net.TCPConn, msgId uint32, data proto.Message) {
 	// 写入数据到连接
 	pkg, err := MessageToPackage(msgId, data)
 	if err != nil {
