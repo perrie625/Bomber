@@ -1,0 +1,11 @@
+syntax = "proto3";
+package protodata;
+
+
+message SayMessage{
+    string words = 1;
+}
+
+//message SaidMessage{
+//    string words = 1;
+//}
