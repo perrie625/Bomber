@@ -11,3 +11,9 @@ var (
 	protoIds map[string]uint16
 )
 
+func init() {
+	handlers = make(map[uint16]interface{})
+	messages = make(map[uint16] *proto.Message)
+	protoIds = make(map[string] uint16)
+}
+
