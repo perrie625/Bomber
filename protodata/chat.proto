@@ -6,6 +6,8 @@ message SayMessage{
     string words = 1;
 }
 
-//message SaidMessage{
-//    string words = 1;
-//}
+message SaidMessage{
+    string name = 1;
+    string time = 2;
+    string words = 3;
+}

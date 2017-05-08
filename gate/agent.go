@@ -6,12 +6,13 @@ import (
 	"Bomber/network"
 	"Bomber/protodata"
 	"github.com/golang/protobuf/proto"
+	"time"
 )
 
 type room interface {
 	AddAgent(*Agent)
 	RemoveAgent(*Agent)
-	BroadCast(string)
+	BroadCast(proto.Message)
 }
 
 type Agent struct {
@@ -37,8 +38,7 @@ func (agent *Agent) Run(){
 	for {
 		// 待完善
 		// 只是单纯实现了proto接收，然后广播字符串
-		msgId, err := agent.msgParser.GetMsgId()
-		log.Println(msgId)
+		_, err := agent.msgParser.GetMsgId()
 		if err != nil {
 			return
 		}
@@ -48,7 +48,12 @@ func (agent *Agent) Run(){
 		}
 		msg := new(protodata.SayMessage)
 		_ = proto.Unmarshal(msgData, msg)
-		agent.Room.BroadCast(msg.Words + "\n")
+		resp := new(protodata.SaidMessage)
+		resp.Name = agent.RemoteAddr
+		now := time.Now()
+		resp.Time = now.Format("2006-01-02 15:04:05")
+		resp.Words = msg.Words
+		agent.Room.BroadCast(resp)
 	}
 }
 

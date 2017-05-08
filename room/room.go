@@ -4,6 +4,9 @@ import (
 	agent "Bomber/gate"
 	"log"
 	"sync"
+
+	"github.com/golang/protobuf/proto"
+	"Bomber/network"
 )
 
 var (
@@ -38,11 +41,10 @@ func (room *Room) Destroy(){
 	}
 }
 
-func (room *Room) BroadCast(message string){
-	b := []byte(message)
+func (room *Room) BroadCast(message proto.Message){
 	room.agentsRWMutex.RLock()
 	for a := range room.agentMap {
-		a.Conn.Write(b)
+		network.WriteMessage(a.Conn, 1, message)
 	}
 	room.agentsRWMutex.RUnlock()
 }
