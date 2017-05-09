@@ -25,18 +25,9 @@ func main()  {
 			conn.Close()
 			continue
 		}
-		agent := Gate.NewAgent(conn)
-		agent.EntryRoom(room.MainRoom)
-
-		go agent.Run()
-
-		// destroy room test
-		//if count == 1 {
-		//	room.MainRoom.Destroy()
-		//	break
-		//}
+		session := Gate.NewSession(conn)
+		// 进入大厅房间
+		session.EntryRoom(room.MainRoom)
+		go Gate.Agent(session)
 	}
-
-
-
 }

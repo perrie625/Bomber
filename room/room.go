@@ -1,60 +1,66 @@
 package room
 
 import (
-	agent "Bomber/gate"
 	"log"
 	"sync"
 
 	"github.com/golang/protobuf/proto"
 	"Bomber/network"
+	"net"
 )
 
 var (
 	MainRoom = NewRoom()
 )
 
+type Session interface {
+	Close()
+	GetAddr() string
+	GetCon() *net.TCPConn
+}
+
 type Room struct {
-	roomId string
-	maxLength int32
-	entrance chan string
-	agentsRWMutex sync.RWMutex
-	agentMap map[*agent.Agent] struct{}
+	roomId     string
+	maxLength  int32
+	entrance   chan string
+	sRWMutex   sync.RWMutex
+	sessionMap map[Session] struct{}
 }
 
-func (room *Room) AddAgent(agent *agent.Agent){
-	room.agentsRWMutex.Lock()
-	room.agentMap[agent] = struct{}{}
-	room.agentsRWMutex.Unlock()
-	log.Println(agent.RemoteAddr, " entries.")
+func (room *Room) AddSession(session Session){
+	room.sRWMutex.Lock()
+	room.sessionMap[session] = struct{}{}
+	room.sRWMutex.Unlock()
+	log.Println(session.GetAddr(), " entries.")
 }
 
-func (room *Room) RemoveAgent(agent *agent.Agent){
-	room.agentsRWMutex.Lock()
-	delete(room.agentMap, agent)
-	room.agentsRWMutex.Unlock()
-	log.Println(agent.RemoteAddr, " exits.")
+func (room *Room) RemoveSession(s Session){
+	room.sRWMutex.Lock()
+	delete(room.sessionMap, s)
+	room.sRWMutex.Unlock()
+	log.Println(s.GetAddr(), " exits.")
 }
 
 func (room *Room) Destroy(){
-	for a := range room.agentMap {
-		a.Close()
+	for s := range room.sessionMap {
+		s.Close()
 	}
 }
 
 func (room *Room) BroadCast(message proto.Message){
-	room.agentsRWMutex.RLock()
-	for a := range room.agentMap {
-		network.WriteMessage(a.Conn, 1, message)
+	room.sRWMutex.RLock()
+	for s := range room.sessionMap {
+		network.WriteMessage(s.GetCon(), 1, message)
 	}
-	room.agentsRWMutex.RUnlock()
+	room.sRWMutex.RUnlock()
 }
 
 
 func NewRoom() *Room {
 	return &Room{
-		roomId: "main",
-		maxLength: 20,
-		agentMap: make(map[*agent.Agent] struct{}),
+		roomId:     "main",
+		maxLength:  20,
+		sessionMap: make(map[Session] struct{}),
 	}
 }
 
