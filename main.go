@@ -5,7 +5,7 @@ import (
 	"log"
 	"os"
 	Gate "Bomber/gate"
-	"Bomber/room"
+	"Bomber/models"
 )
 
 
@@ -25,9 +25,9 @@ func main()  {
 			conn.Close()
 			continue
 		}
-		session := Gate.NewSession(conn)
+		session := models.NewSession(conn)
 		// 进入大厅房间
-		session.EntryRoom(room.MainRoom)
+		session.EntryRoom(models.MainRoom)
 		go Gate.Agent(session)
 	}
 }

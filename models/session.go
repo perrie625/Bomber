@@ -1,4 +1,4 @@
-package gate
+package models
 
 import (
 	"net"
@@ -7,14 +7,13 @@ import (
 	"Bomber/protodata"
 	"github.com/golang/protobuf/proto"
 	"time"
-	"Bomber/room"
 )
 
 type Session struct {
 	Conn       *net.TCPConn
 	RemoteAddr string
-	msgParser  *network.MsgParser
-	Room       *room.Room
+	MsgParser  *network.MsgParser
+	Room       *Room
 }
 
 func (s *Session) Close() {
@@ -33,11 +32,11 @@ func (s *Session) Run(){
 	for {
 		// 待完善
 		// 只是单纯实现了proto接收，然后广播字符串
-		_, err := s.msgParser.GetMsgId()
+		_, err := s.MsgParser.GetMsgId()
 		if err != nil {
 			return
 		}
-		msgData, err := s.msgParser.GetMsgData()
+		msgData, err := s.MsgParser.GetMsgData()
 		if err != nil {
 			return
 		}
@@ -57,7 +56,7 @@ func (s *Session) ReadMessage() {
 }
 
 
-func (s *Session) EntryRoom(room *room.Room) {
+func (s *Session) EntryRoom(room *Room) {
 	s.Room = room
 	room.AddSession(s)
 }
@@ -82,8 +81,8 @@ func NewSession(conn *net.TCPConn) *Session {
 	remoteAddr := conn.RemoteAddr().String()
 	log.Println(remoteAddr, " connected.")
 	return &Session{
-		Conn: conn,
+		Conn:       conn,
 		RemoteAddr: remoteAddr,
-		msgParser: network.NewMsgParser(conn),
+		MsgParser:  network.NewMsgParser(conn),
 	}
 }

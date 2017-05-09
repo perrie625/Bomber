@@ -1,4 +1,4 @@
-package room
+package models
 
 import (
 	"log"
@@ -6,35 +6,29 @@ import (
 
 	"github.com/golang/protobuf/proto"
 	"Bomber/network"
-	"net"
 )
 
 var (
 	MainRoom = NewRoom()
 )
 
-type Session interface {
-	Close()
-	GetAddr() string
-	GetCon() *net.TCPConn
-}
 
 type Room struct {
 	roomId     string
 	maxLength  int32
 	entrance   chan string
 	sRWMutex   sync.RWMutex
-	sessionMap map[Session] struct{}
+	sessionMap map[*Session] struct{}
 }
 
-func (room *Room) AddSession(session Session){
+func (room *Room) AddSession(session *Session){
 	room.sRWMutex.Lock()
 	room.sessionMap[session] = struct{}{}
 	room.sRWMutex.Unlock()
 	log.Println(session.GetAddr(), " entries.")
 }
 
-func (room *Room) RemoveSession(s Session){
+func (room *Room) RemoveSession(s *Session){
 	room.sRWMutex.Lock()
 	delete(room.sessionMap, s)
 	room.sRWMutex.Unlock()
@@ -60,7 +54,7 @@ func NewRoom() *Room {
 	return &Room{
 		roomId:     "main",
 		maxLength:  20,
-		sessionMap: make(map[Session] struct{}),
+		sessionMap: make(map[*Session] struct{}),
 	}
 }
 

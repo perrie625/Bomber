@@ -5,22 +5,23 @@ import (
 	"github.com/golang/protobuf/proto"
 	"time"
 	"log"
+	"Bomber/models"
 )
 
 
-func Agent (session *Session){
+func Agent (session *models.Session){
 	defer func(){
 		session.Close()
 	}()
 	for {
 		// 待完善
 		// 只是单纯实现了proto接收，然后广播字符串
-		_, err := session.msgParser.GetMsgId()
+		_, err := session.MsgParser.GetMsgId()
 		if err != nil {
 			log.Println(err.Error())
 			return
 		}
-		msgData, err := session.msgParser.GetMsgData()
+		msgData, err := session.MsgParser.GetMsgData()
 		if err != nil {
 			return
 		}
