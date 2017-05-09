@@ -29,7 +29,7 @@ func init() {
 
 
 
-func RegisteHandler(msgId uint32, handler MsgHandler, msgType reflect.Type) (r error){
+func RegisterHandler(msgId uint32, handler MsgHandler, msgType reflect.Type) (r error){
 	tmp := &MsgInfo{
 		msgId, handler, msgType,
 	}

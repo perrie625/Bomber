@@ -26,5 +26,5 @@ func HandleChat(session *models.Session, rawMsg *network.RawMessage) {
 
 
 func init() {
-	gate.RegisteHandler(1, HandleChat, reflect.TypeOf(protodata.SayMessage{}))
+	gate.RegisterHandler(1, HandleChat, reflect.TypeOf(protodata.SayMessage{}))
 }
