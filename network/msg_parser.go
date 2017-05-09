@@ -20,6 +20,11 @@ type MsgParser struct {
 	reader *net.TCPConn
 }
 
+type RawMessage struct {
+	Id uint32
+	Data []byte
+}
+
 
 func NewMsgParser(con *net.TCPConn) *MsgParser {
 	p := &MsgParser{
@@ -74,27 +79,28 @@ func (parser *MsgParser) GetMsgLen() (uint16, error) {
 	return msgLen, nil
 }
 
-func (parser *MsgParser) ReadMsgPacket() (uint32, []byte, error) {
+func (parser *MsgParser) ReadMsgPacket() (*RawMessage, error) {
 	// 读取数据包
 	// 返回协议内和消息结构bytes
 	msgId, err := parser.GetMsgId()
 	if err != nil {
-		return 0, nil, err
+		return nil, err
 	}
 	// 获取消息长度
 	msgLen, err := parser.GetMsgLen()
 	if err != nil {
-		return 0, nil, err
+		return nil, err
 	}
 	// 获取消息内容
 	msgData := make([]byte, msgLen)
 	if _, err := io.ReadFull(parser.reader, msgData); err != nil {
-		return 0, nil, err
+		return nil, err
 	}
 	if err != nil {
-		return 0, nil, err
+		return nil, err
 	}
-	return msgId, msgData, err
+	resp := &RawMessage{msgId, msgData}
+	return resp, err
 
 }
 

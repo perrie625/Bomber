@@ -5,12 +5,13 @@ import (
 	"Bomber/models"
 	"time"
 	"github.com/golang/protobuf/proto"
+	"Bomber/network"
 )
 
-func HandleChat(session *models.Session, msgBytes []byte) {
+func HandleChat(session *models.Session, rawMsg *network.RawMessage) {
 	// 一个简单的消息处理
 	msg := new(protodata.SayMessage)
-	if err := proto.Unmarshal(msgBytes, msg); err != nil {
+	if err := proto.Unmarshal(rawMsg.Data, msg); err != nil {
 		return
 	}
 	resp := new(protodata.SaidMessage)

@@ -13,12 +13,12 @@ func Agent (session *models.Session){
 	for {
 		// 待完善
 		// 只是单纯实现了proto接收，然后广播字符串
-		msgId, msgBytes, err := session.MsgParser.ReadMsgPacket()
+		rawMsg, err := session.MsgParser.ReadMsgPacket()
 		if err != nil {
 			return
 		}
-		if msgId == 1 {
-			handlers.HandleChat(session, msgBytes)
+		if rawMsg.Id == 1 {
+			handlers.HandleChat(session, rawMsg)
 		}
 	}
 }
