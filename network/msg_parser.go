@@ -74,14 +74,23 @@ func (parser *MsgParser) GetMsgLen() (uint16, error) {
 	return msgLen, nil
 }
 
-func (parser *MsgParser) ReadProtoData() (uint32, []byte, error) {
-	// 获取传输的消息结构buff
+func (parser *MsgParser) ReadMsgPacket() (uint32, []byte, error) {
+	// 读取数据包
+	// 返回协议内和消息结构bytes
 	msgId, err := parser.GetMsgId()
 	if err != nil {
 		return 0, nil, err
 	}
+	// 获取消息长度
+	msgLen, err := parser.GetMsgLen()
+	if err != nil {
+		return 0, nil, err
+	}
 	// 获取消息内容
-	msgData, err := parser.GetMsgData()
+	msgData := make([]byte, msgLen)
+	if _, err := io.ReadFull(parser.reader, msgData); err != nil {
+		return 0, nil, err
+	}
 	if err != nil {
 		return 0, nil, err
 	}
@@ -89,21 +98,6 @@ func (parser *MsgParser) ReadProtoData() (uint32, []byte, error) {
 
 }
 
-
-func (parser *MsgParser) GetMsgData() ([]byte, error){
-
-	msgLen, err := parser.GetMsgLen()
-	if err != nil {
-		return nil, err
-	}
-
-	msgData := make([]byte, msgLen)
-	if _, err := io.ReadFull(parser.reader, msgData); err != nil {
-		return nil, err
-	}
-
-	return msgData, nil
-}
 
 func MessageToPackage(msgId uint32, data proto.Message) (*bytes.Buffer, error){
 	// 将消息封装成数据包

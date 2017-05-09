@@ -4,9 +4,6 @@ import (
 	"net"
 	"log"
 	"Bomber/network"
-	"Bomber/protodata"
-	"github.com/golang/protobuf/proto"
-	"time"
 )
 
 type Session struct {
@@ -25,31 +22,6 @@ func (s *Session) Close() {
 }
 
 
-func (s *Session) Run(){
-	defer func(){
-		s.Close()
-	}()
-	for {
-		// 待完善
-		// 只是单纯实现了proto接收，然后广播字符串
-		_, err := s.MsgParser.GetMsgId()
-		if err != nil {
-			return
-		}
-		msgData, err := s.MsgParser.GetMsgData()
-		if err != nil {
-			return
-		}
-		msg := new(protodata.SayMessage)
-		_ = proto.Unmarshal(msgData, msg)
-		resp := new(protodata.SaidMessage)
-		resp.Name = s.RemoteAddr
-		now := time.Now()
-		resp.Time = now.Format("2006-01-02 15:04:05")
-		resp.Words = msg.Words
-		s.Room.BroadCast(resp)
-	}
-}
 
 func (s *Session) ReadMessage() {
 
