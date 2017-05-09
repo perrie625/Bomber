@@ -1,7 +1,6 @@
 package gate
 
 import (
-	"Bomber/gate/handlers"
 	"Bomber/models"
 )
 
@@ -17,8 +16,6 @@ func Agent (session *models.Session){
 		if err != nil {
 			return
 		}
-		if rawMsg.Id == 1 {
-			handlers.HandleChat(session, rawMsg)
-		}
+		Route(session, rawMsg)
 	}
 }

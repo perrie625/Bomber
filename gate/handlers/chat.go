@@ -6,6 +6,8 @@ import (
 	"time"
 	"github.com/golang/protobuf/proto"
 	"Bomber/network"
+	"Bomber/gate"
+	"reflect"
 )
 
 func HandleChat(session *models.Session, rawMsg *network.RawMessage) {
@@ -15,9 +17,14 @@ func HandleChat(session *models.Session, rawMsg *network.RawMessage) {
 		return
 	}
 	resp := new(protodata.SaidMessage)
-	resp.Name = session.RemoteAddr
+	resp.Name = session.GetAddr()
 	now := time.Now()
 	resp.Time = now.Format("2006-01-02 15:04:05")
 	resp.Words = msg.Words
 	session.Room.BroadCast(resp)
+}
+
+
+func init() {
+	gate.RegisteHandler(1, HandleChat, reflect.TypeOf(protodata.SayMessage{}))
 }
