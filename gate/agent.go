@@ -15,7 +15,7 @@ func Agent (session *models.Session){
 		// 只是单纯实现了proto接收，然后广播字符串
 		msgId, msgBytes, err := session.MsgParser.ReadMsgPacket()
 		if err != nil {
-			continue
+			return
 		}
 		if msgId == 1 {
 			handlers.HandleChat(session, msgBytes)

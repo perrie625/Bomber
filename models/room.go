@@ -37,7 +37,7 @@ func (room *Room) RemoveSession(s *Session){
 
 func (room *Room) Destroy(){
 	for s := range room.sessionMap {
-		s.Close()
+		s.ExitRoom()
 	}
 }
 
