@@ -3,7 +3,7 @@ package gate
 import (
 	"Bomber/protodata"
 	"github.com/golang/protobuf/proto"
-	"time"
+	"Bomber/gate/handlers"
 	"log"
 	"Bomber/models"
 )
@@ -16,7 +16,7 @@ func Agent (session *models.Session){
 	for {
 		// 待完善
 		// 只是单纯实现了proto接收，然后广播字符串
-		_, err := session.MsgParser.GetMsgId()
+		msgId, err := session.MsgParser.GetMsgId()
 		if err != nil {
 			log.Println(err.Error())
 			return
@@ -27,11 +27,8 @@ func Agent (session *models.Session){
 		}
 		msg := new(protodata.SayMessage)
 		_ = proto.Unmarshal(msgData, msg)
-		resp := new(protodata.SaidMessage)
-		resp.Name = session.RemoteAddr
-		now := time.Now()
-		resp.Time = now.Format("2006-01-02 15:04:05")
-		resp.Words = msg.Words
-		session.Room.BroadCast(resp)
+		if msgId == 1 {
+			handlers.HandleChat(session, msg)
+		}
 	}
 }
