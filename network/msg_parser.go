@@ -74,21 +74,18 @@ func (parser *MsgParser) GetMsgLen() (uint16, error) {
 	return msgLen, nil
 }
 
-func (parser *MsgParser) ReadProtoData(msgId uint32){
+func (parser *MsgParser) ReadProtoData() (uint32, []byte, error) {
 	// 获取传输的消息结构buff
-	//msgId, err := parser.GetMsgId()
-	//if err != nil {
-	//	// todo: error handle
-	//}
-	//
-	//// 获取消息内容
-	//msgData, err := parser.GetMsgData()
-	//if err != nil {
-	//	// todo: error handle
-	//}
-	//
-	//
-
+	msgId, err := parser.GetMsgId()
+	if err != nil {
+		return 0, nil, err
+	}
+	// 获取消息内容
+	msgData, err := parser.GetMsgData()
+	if err != nil {
+		return 0, nil, err
+	}
+	return msgId, msgData, err
 
 }
 
@@ -97,7 +94,6 @@ func (parser *MsgParser) GetMsgData() ([]byte, error){
 
 	msgLen, err := parser.GetMsgLen()
 	if err != nil {
-		// todo: error handle
 		return nil, err
 	}
 
