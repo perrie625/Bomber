@@ -5,6 +5,8 @@ package protodata;
 message FlagNum{
     enum Flag{
         eUnknown=0;
-        eNoUser=1;
+        eOk=1;
+        eNoUser=2;
+        eLoginFail=3;
     }
 }
