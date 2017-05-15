@@ -41,8 +41,7 @@ func (parser *MsgParser) GetMsgId() (uint32, error) {
 	// 用来获取消息的msgId
 	var r uint32
 	// 判断消息长度
-	var l [4]byte
-	msgIdBuf := l[:parser.msgIdLen]
+	msgIdBuf := make([]byte, parser.msgIdLen)
 	if _, err := parser.reader.Read(msgIdBuf); err != nil {
 		return r, err
 	}
@@ -63,8 +62,7 @@ func (parser *MsgParser) GetMsgLen() (uint16, error) {
 
 	var r uint16
 	// 判断消息长度
-	var l [2]byte
-	msgLenBuf := l[:parser.msgLenNum]
+	msgLenBuf := make([]byte, parser.msgLenNum)
 	if _, err := io.ReadFull(parser.reader, msgLenBuf); err != nil {
 		return r, err
 	}
