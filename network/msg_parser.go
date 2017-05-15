@@ -28,7 +28,7 @@ type RawMessage struct {
 
 func NewMsgParser(con *net.TCPConn) *MsgParser {
 	p := &MsgParser{
-		msgLenNum:    2,
+		msgLenNum:    4,
 		msgIdLen:     4,
 		littleEndian: false,
 		reader:	      con,
@@ -57,10 +57,10 @@ func (parser *MsgParser) GetMsgId() (uint32, error) {
 }
 
 
-func (parser *MsgParser) GetMsgLen() (uint16, error) {
+func (parser *MsgParser) GetMsgLen() (uint32, error) {
 	// 用来获取消息结构的长度
 
-	var r uint16
+	var r uint32
 	// 判断消息长度
 	msgLenBuf := make([]byte, parser.msgLenNum)
 	if _, err := io.ReadFull(parser.reader, msgLenBuf); err != nil {
@@ -68,11 +68,11 @@ func (parser *MsgParser) GetMsgLen() (uint16, error) {
 	}
 
 	// 解析msgLen
-	var msgLen uint16
+	var msgLen uint32
 	if parser.littleEndian {
-		msgLen = binary.LittleEndian.Uint16(msgLenBuf)
+		msgLen = binary.LittleEndian.Uint32(msgLenBuf)
 	} else {
-		msgLen = binary.BigEndian.Uint16(msgLenBuf)
+		msgLen = binary.BigEndian.Uint32(msgLenBuf)
 	}
 	return msgLen, nil
 }
@@ -109,7 +109,7 @@ func MessageToPackage(msgId uint32, data proto.Message) (*bytes.Buffer, error){
 	if err != nil {
 		return nil, err
 	}
-	msgLen := uint16(len(msgBuff))
+	msgLen := uint32(len(msgBuff))
 	var pkg *bytes.Buffer = new(bytes.Buffer)
 	// 写入协议ID
 	err = binary.Write(pkg, binary.BigEndian, msgId)
