@@ -64,17 +64,17 @@ func (parser *MsgParser) GetMsgLen() (uint16, error) {
 	var r uint16
 	// 判断消息长度
 	var l [2]byte
-	msgIdBuf := l[:parser.msgLenNum]
-	if _, err := io.ReadFull(parser.reader, msgIdBuf); err != nil {
+	msgLenBuf := l[:parser.msgLenNum]
+	if _, err := io.ReadFull(parser.reader, msgLenBuf); err != nil {
 		return r, err
 	}
 
 	// 解析msgLen
 	var msgLen uint16
 	if parser.littleEndian {
-		msgLen = binary.LittleEndian.Uint16(msgIdBuf)
+		msgLen = binary.LittleEndian.Uint16(msgLenBuf)
 	} else {
-		msgLen = binary.BigEndian.Uint16(msgIdBuf)
+		msgLen = binary.BigEndian.Uint16(msgLenBuf)
 	}
 	return msgLen, nil
 }
