@@ -6,6 +6,7 @@ import (
 	"net"
 	"github.com/golang/protobuf/proto"
 	"bytes"
+	"Bomber/tools"
 )
 
 // 负责协议消息的路由和解析
@@ -102,6 +103,15 @@ func (mp *MsgProxy) ReadMsgPacket() (*RawMessage, error) {
 	if err != nil {
 		return nil, err
 	}
+
+	// 解密
+	if mp.encrypt {
+		msgData, err = tools.Decrypt(msgData, mp.secret_key)
+		if err != nil {
+			return nil, err
+		}
+	}
+
 	resp := &RawMessage{msgId, msgData}
 	return resp, err
 
@@ -114,6 +124,15 @@ func(mp *MsgProxy) MessageToPackage(msgId uint32, data proto.Message) (*bytes.Bu
 	if err != nil {
 		return nil, err
 	}
+
+	// 判断是否加密
+	if mp.encrypt {
+		msgBuff, err = tools.Encrypt(msgBuff, mp.secret_key)
+		if err != nil {
+			return nil, err
+		}
+	}
+
 	msgLen := uint32(len(msgBuff))
 	var pkg *bytes.Buffer = new(bytes.Buffer)
 	// 写入协议ID
