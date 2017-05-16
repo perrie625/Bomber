@@ -31,13 +31,13 @@ type RawMessage struct {
 
 func NewMsgProxy(con *net.TCPConn) *MsgProxy {
 	p := &MsgProxy{
-		msgLenNum:    4,
-		msgIdLen:     4,
+		msgLenNum:    tools.ServerConfig.MsgLenNum,
+		msgIdLen:     tools.ServerConfig.MsgIdLenNum,
 		littleEndian: false,
 		conn:         con,
 		// encrypt test
-		encrypt:      true,
-		secret_key:   []byte("AES256Key-32Characters1234567890"),
+		encrypt:      tools.ServerConfig.Encrypt,
+		secret_key:   []byte(tools.ServerConfig.SecretKey),
 	}
 	return p
 }

@@ -7,19 +7,21 @@ import (
 	Gate "Bomber/gate"
 	"Bomber/models"
 	_ "Bomber/gate/handlers"
+	"Bomber/tools"
 )
 
 
 func main()  {
-	tcpAddr, _ := net.ResolveTCPAddr("tcp", "127.0.0.1:8080")
+	tcpAddr := tools.ServerConfig.GetTcpAddr()
 	ln, err := net.ListenTCP("tcp", tcpAddr)
 	defer ln.Close()
 
 	if err != nil {
 		log.Println("Listen failed.")
+		log.Println(err.Error())
 		os.Exit(1)
 	}
-	log.Println("Listen on 8080.")
+	log.Printf("Listen on %s.", tcpAddr.String())
 	for {
 		conn, err := ln.AcceptTCP()
 		if err != nil {

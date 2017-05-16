@@ -1,0 +1,9 @@
+{
+  "db_url": "mongodb://localhost:27017/admin:",
+  "msg_len_num": 4,
+  "msg_id_len_num": 4,
+  "encrypt": false,
+  "secret_key": "AES256Key-32Characters1234567890",
+  "port": 8080,
+  "bind_ip": "10.224.32.77"
+}
