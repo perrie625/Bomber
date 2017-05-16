@@ -17,7 +17,7 @@ type MsgProxy struct {
 	msgLenNum    uint16
 	msgIdLen     uint16
 	littleEndian bool
-	reader *net.TCPConn
+	conn         *net.TCPConn
 }
 
 type RawMessage struct {
@@ -31,7 +31,7 @@ func NewMsgProxy(con *net.TCPConn) *MsgProxy {
 		msgLenNum:    4,
 		msgIdLen:     4,
 		littleEndian: false,
-		reader:	      con,
+		conn:         con,
 	}
 	return p
 }
@@ -42,7 +42,7 @@ func (mp *MsgProxy) GetMsgId() (uint32, error) {
 	var r uint32
 	// 判断消息长度
 	msgIdBuf := make([]byte, mp.msgIdLen)
-	if _, err := mp.reader.Read(msgIdBuf); err != nil {
+	if _, err := mp.conn.Read(msgIdBuf); err != nil {
 		return r, err
 	}
 
@@ -63,7 +63,7 @@ func (mp *MsgProxy) GetMsgLen() (uint32, error) {
 	var r uint32
 	// 判断消息长度
 	msgLenBuf := make([]byte, mp.msgLenNum)
-	if _, err := io.ReadFull(mp.reader, msgLenBuf); err != nil {
+	if _, err := io.ReadFull(mp.conn, msgLenBuf); err != nil {
 		return r, err
 	}
 
@@ -91,7 +91,7 @@ func (mp *MsgProxy) ReadMsgPacket() (*RawMessage, error) {
 	}
 	// 获取消息内容
 	msgData := make([]byte, msgLen)
-	if _, err := io.ReadFull(mp.reader, msgData); err != nil {
+	if _, err := io.ReadFull(mp.conn, msgData); err != nil {
 		return nil, err
 	}
 	if err != nil {
@@ -103,7 +103,7 @@ func (mp *MsgProxy) ReadMsgPacket() (*RawMessage, error) {
 }
 
 
-func MessageToPackage(msgId uint32, data proto.Message) (*bytes.Buffer, error){
+func(mp *MsgProxy) MessageToPackage(msgId uint32, data proto.Message) (*bytes.Buffer, error){
 	// 将消息封装成数据包
 	msgBuff, err := proto.Marshal(data)
 	if err != nil {
@@ -127,13 +127,13 @@ func MessageToPackage(msgId uint32, data proto.Message) (*bytes.Buffer, error){
 	return pkg, nil
 }
 
-func WriteMessage(con *net.TCPConn, msgId uint32, data proto.Message) {
+func (mp *MsgProxy) WriteMessage(msgId uint32, data proto.Message) {
 	// 写入数据到连接
-	pkg, err := MessageToPackage(msgId, data)
+	pkg, err := mp.MessageToPackage(msgId, data)
 	if err != nil {
 		// todo: error handle
 	}
-	con.Write(pkg.Bytes())
+	mp.conn.Write(pkg.Bytes())
 }
 
 

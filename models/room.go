@@ -5,7 +5,6 @@ import (
 	"sync"
 
 	"github.com/golang/protobuf/proto"
-	"Bomber/network"
 )
 
 var (
@@ -44,7 +43,7 @@ func (room *Room) Destroy(){
 func (room *Room) BroadCast(message proto.Message){
 	room.sRWMutex.RLock()
 	for s := range room.sessionMap {
-		network.WriteMessage(s.GetCon(), 1, message)
+		s.MsgProxy.WriteMessage(1, message)
 	}
 	room.sRWMutex.RUnlock()
 }
