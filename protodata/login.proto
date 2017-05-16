@@ -4,11 +4,14 @@ import "protodata/flags.proto";
 
 
 message LoginRequest {
+    enum MSGID{unknown=0;ID=1003;}
     string username = 1;
     string password = 2;
 }
 
+
 message LoginResponse {
+    enum MSGID{unknown=0;ID=1004;}
     protodata.FlagNum.Flag flag = 1;
     string desc = 2;
 }

@@ -25,5 +25,8 @@ func HandleLogin(session *models.Session, rawMsg *network.RawMessage) {
 
 
 func init() {
-	gate.RegisterHandler(2, HandleLogin, reflect.TypeOf(protodata.LoginRequest{}))
+	gate.RegisterHandler(
+		int32(protodata.LoginRequest_ID),
+		HandleLogin,
+		reflect.TypeOf(protodata.LoginRequest{}))
 }

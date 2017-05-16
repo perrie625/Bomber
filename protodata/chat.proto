@@ -3,10 +3,12 @@ package protodata;
 
 
 message SayMessage{
+    enum MSGID{unknown=0;ID=1001;}
     string words = 1;
 }
 
 message SaidMessage{
+    enum MSGID{unknown=0;ID=1002;}
     string name = 1;
     string time = 2;
     string words = 3;
