@@ -13,7 +13,7 @@ import (
 // | msgId | msgLenNum | data |
 // -------------------------
 
-type MsgParser struct {
+type MsgProxy struct {
 	msgLenNum    uint16
 	msgIdLen     uint16
 	littleEndian bool
@@ -26,8 +26,8 @@ type RawMessage struct {
 }
 
 
-func NewMsgParser(con *net.TCPConn) *MsgParser {
-	p := &MsgParser{
+func NewMsgProxy(con *net.TCPConn) *MsgProxy {
+	p := &MsgProxy{
 		msgLenNum:    4,
 		msgIdLen:     4,
 		littleEndian: false,
@@ -37,18 +37,18 @@ func NewMsgParser(con *net.TCPConn) *MsgParser {
 }
 
 
-func (parser *MsgParser) GetMsgId() (uint32, error) {
+func (mp *MsgProxy) GetMsgId() (uint32, error) {
 	// 用来获取消息的msgId
 	var r uint32
 	// 判断消息长度
-	msgIdBuf := make([]byte, parser.msgIdLen)
-	if _, err := parser.reader.Read(msgIdBuf); err != nil {
+	msgIdBuf := make([]byte, mp.msgIdLen)
+	if _, err := mp.reader.Read(msgIdBuf); err != nil {
 		return r, err
 	}
 
 	// 解析msgID
 	var msgId uint32
-	if parser.littleEndian {
+	if mp.littleEndian {
 		msgId = uint32(binary.LittleEndian.Uint32(msgIdBuf))
 	} else {
 		msgId = uint32(binary.BigEndian.Uint32(msgIdBuf))
@@ -57,19 +57,19 @@ func (parser *MsgParser) GetMsgId() (uint32, error) {
 }
 
 
-func (parser *MsgParser) GetMsgLen() (uint32, error) {
+func (mp *MsgProxy) GetMsgLen() (uint32, error) {
 	// 用来获取消息结构的长度
 
 	var r uint32
 	// 判断消息长度
-	msgLenBuf := make([]byte, parser.msgLenNum)
-	if _, err := io.ReadFull(parser.reader, msgLenBuf); err != nil {
+	msgLenBuf := make([]byte, mp.msgLenNum)
+	if _, err := io.ReadFull(mp.reader, msgLenBuf); err != nil {
 		return r, err
 	}
 
 	// 解析msgLen
 	var msgLen uint32
-	if parser.littleEndian {
+	if mp.littleEndian {
 		msgLen = binary.LittleEndian.Uint32(msgLenBuf)
 	} else {
 		msgLen = binary.BigEndian.Uint32(msgLenBuf)
@@ -77,21 +77,21 @@ func (parser *MsgParser) GetMsgLen() (uint32, error) {
 	return msgLen, nil
 }
 
-func (parser *MsgParser) ReadMsgPacket() (*RawMessage, error) {
+func (mp *MsgProxy) ReadMsgPacket() (*RawMessage, error) {
 	// 读取数据包
 	// 返回协议内和消息结构bytes
-	msgId, err := parser.GetMsgId()
+	msgId, err := mp.GetMsgId()
 	if err != nil {
 		return nil, err
 	}
 	// 获取消息长度
-	msgLen, err := parser.GetMsgLen()
+	msgLen, err := mp.GetMsgLen()
 	if err != nil {
 		return nil, err
 	}
 	// 获取消息内容
 	msgData := make([]byte, msgLen)
-	if _, err := io.ReadFull(parser.reader, msgData); err != nil {
+	if _, err := io.ReadFull(mp.reader, msgData); err != nil {
 		return nil, err
 	}
 	if err != nil {

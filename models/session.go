@@ -9,7 +9,7 @@ import (
 type Session struct {
 	Conn       *net.TCPConn
 	RemoteAddr string
-	MsgParser  *network.MsgParser
+	MsgProxy   *network.MsgProxy
 	Room       *Room
 }
 
@@ -55,6 +55,6 @@ func NewSession(conn *net.TCPConn) *Session {
 	return &Session{
 		Conn:       conn,
 		RemoteAddr: remoteAddr,
-		MsgParser:  network.NewMsgParser(conn),
+		MsgProxy:   network.NewMsgProxy(conn),
 	}
 }

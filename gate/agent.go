@@ -12,7 +12,7 @@ func Agent (session *models.Session){
 	for {
 		// 待完善
 		// 只是单纯实现了proto接收，然后广播字符串
-		rawMsg, err := session.MsgParser.ReadMsgPacket()
+		rawMsg, err := session.MsgProxy.ReadMsgPacket()
 		if err != nil {
 			return
 		}
