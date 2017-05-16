@@ -18,6 +18,8 @@ type MsgProxy struct {
 	msgIdLen     uint16
 	littleEndian bool
 	conn         *net.TCPConn
+	encrypt      bool
+	secret_key   []byte
 }
 
 type RawMessage struct {
@@ -32,6 +34,9 @@ func NewMsgProxy(con *net.TCPConn) *MsgProxy {
 		msgIdLen:     4,
 		littleEndian: false,
 		conn:         con,
+		// encrypt test
+		encrypt:      true,
+		secret_key:   []byte("AES256Key-32Characters1234567890"),
 	}
 	return p
 }
