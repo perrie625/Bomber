@@ -9,27 +9,27 @@ import (
 
 var (
 	// 协议ID和消息结构的映射
-	messageMap map[uint32] *MsgInfo
+	messageMap map[int32] *MsgInfo
 	// 消息结构和协议ID的映射
-	protoIdMap map[reflect.Type]uint32
+	protoIdMap map[reflect.Type]int32
 )
 
 type MsgHandler func(*models.Session, *network.RawMessage)
 
 type MsgInfo struct {
-	msgId uint32
+	msgId int32
 	Handler MsgHandler
 	ProtoMsg reflect.Type
 }
 
 func init() {
-	messageMap = make(map[uint32] *MsgInfo)
-	protoIdMap = make(map[reflect.Type] uint32)
+	messageMap = make(map[int32] *MsgInfo)
+	protoIdMap = make(map[reflect.Type] int32)
 }
 
 
 
-func RegisterHandler(msgId uint32, handler MsgHandler, msgType reflect.Type) (r error){
+func RegisterHandler(msgId int32, handler MsgHandler, msgType reflect.Type) (r error){
 	tmp := &MsgInfo{
 		msgId, handler, msgType,
 	}
