@@ -5,6 +5,7 @@ import (
 	"errors"
 	"Bomber/models"
 	"Bomber/network"
+	"log"
 )
 
 var (
@@ -47,7 +48,7 @@ func RegisterHandler(msgId int32, handler MsgHandler, msgType reflect.Type) (r e
 func Route(session *models.Session, rawMsg *network.RawMessage){
 	msgInfo := messageMap[rawMsg.Id]
 	if msgInfo == nil {
-		// todo: error handle
+		log.Println("unknown msg id:", rawMsg.Id)
 		return
 	}
 	msgInfo.Handler(session, rawMsg)
