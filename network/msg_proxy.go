@@ -33,7 +33,7 @@ func NewMsgProxy(con *net.TCPConn) *MsgProxy {
 	p := &MsgProxy{
 		msgLenNum:    tools.ServerConfig.MsgLenNum,
 		msgIdLen:     tools.ServerConfig.MsgIdLenNum,
-		littleEndian: false,
+		littleEndian: true,
 		conn:         con,
 		// encrypt test
 		encrypt:      tools.ServerConfig.Encrypt,
@@ -135,17 +135,16 @@ func(mp *MsgProxy) MessageToPackage(msgId int32, data proto.Message) (*bytes.Buf
 
 	msgLen := uint32(len(msgBuff))
 	var pkg *bytes.Buffer = new(bytes.Buffer)
-	// 写入协议ID
-	err = binary.Write(pkg, binary.BigEndian, msgId)
-	if err != nil {
-		return nil, err
+
+	// 写入协议ID和数据长度
+	if mp.littleEndian {
+		binary.Write(pkg, binary.LittleEndian, msgId)
+		binary.Write(pkg, binary.LittleEndian, msgLen)
+	} else {
+		binary.Write(pkg, binary.BigEndian, msgId)
+		binary.Write(pkg, binary.BigEndian, msgLen)
 	}
 
-	// 写入数据长度
-	err = binary.Write(pkg, binary.BigEndian, msgLen)
-	if err != nil {
-		return nil, err
-	}
 	// 写入消息内容
 	err = binary.Write(pkg, binary.BigEndian, msgBuff)
 	return pkg, nil
