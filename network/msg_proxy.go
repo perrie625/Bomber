@@ -63,6 +63,12 @@ func (mp *MsgProxy) GetMsgId() (int32, error) {
 }
 
 
+func(mp *MsgProxy) UpdateSessionKey(publicKey string) {
+	// 更新密钥
+	mp.secret_key = []byte(publicKey)
+}
+
+
 func (mp *MsgProxy) GetMsgLen() (uint32, error) {
 	// 用来获取消息结构的长度
 
