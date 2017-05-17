@@ -16,6 +16,7 @@ var (
 type Room interface {
 	RemoveSession(s *Session)
 	BroadCast(message proto.Message)
+	BroadCastOther(*Session, proto.Message)
 	AddSession(*Session)
 }
 
@@ -57,6 +58,18 @@ func (room *room) BroadCast(message proto.Message){
 	room.sRWMutex.RLock()
 	for s := range room.sessionMap {
 		s.SendProtoMessage(int32(protodata.SaidMessage_ID), message)
+	}
+	room.sRWMutex.RUnlock()
+}
+
+
+func (room *room) BroadCastOther(sender *Session, message proto.Message){
+	// Broadcast message except the sender
+	room.sRWMutex.RLock()
+	for s := range room.sessionMap {
+		if s != sender {
+			s.SendProtoMessage(int32(protodata.SaidMessage_ID), message)
+		}
 	}
 	room.sRWMutex.RUnlock()
 }
