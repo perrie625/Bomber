@@ -9,11 +9,17 @@ import (
 )
 
 var (
-	MainRoom = NewRoom()
+	HallRoom *hall
 )
 
 
-type Room struct {
+type Room interface {
+	RemoveSession(s *Session)
+	BroadCast(message proto.Message)
+	AddSession(*Session)
+}
+
+type room struct {
 	roomId     string
 	maxLength  int32
 	entrance   chan string
@@ -21,27 +27,33 @@ type Room struct {
 	sessionMap map[*Session] struct{}
 }
 
-func (room *Room) AddSession(session *Session){
+type hall struct {
+	// 大厅
+	room
+	rooms map[*room]struct{}
+}
+
+func (room *room) AddSession(session *Session){
 	room.sRWMutex.Lock()
 	room.sessionMap[session] = struct{}{}
 	room.sRWMutex.Unlock()
 	log.Println(session.GetAddr(), " entries.")
 }
 
-func (room *Room) RemoveSession(s *Session){
+func (room *room) RemoveSession(s *Session){
 	room.sRWMutex.Lock()
 	delete(room.sessionMap, s)
 	room.sRWMutex.Unlock()
 	log.Println(s.GetAddr(), " exits.")
 }
 
-func (room *Room) Destroy(){
+func (room *room) Destroy(){
 	for s := range room.sessionMap {
 		s.ExitRoom()
 	}
 }
 
-func (room *Room) BroadCast(message proto.Message){
+func (room *room) BroadCast(message proto.Message){
 	room.sRWMutex.RLock()
 	for s := range room.sessionMap {
 		s.SendProtoMessage(int32(protodata.SaidMessage_ID), message)
@@ -50,13 +62,24 @@ func (room *Room) BroadCast(message proto.Message){
 }
 
 
-func NewRoom() *Room {
-	return &Room{
+func NewRoom() *room {
+	return &room{
 		roomId:     "main",
 		maxLength:  20,
 		sessionMap: make(map[*Session] struct{}),
 	}
 }
 
+
+func init() {
+	HallRoom = &hall{
+		rooms: make(map[*room] struct{}),
+		room: room{
+			roomId: "main",
+			maxLength: 10000,
+			sessionMap: make(map[*Session] struct{}),
+		},
+	}
+}
 
 

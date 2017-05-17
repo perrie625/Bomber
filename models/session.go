@@ -11,7 +11,7 @@ type Session struct {
 	Conn       *net.TCPConn
 	RemoteAddr string
 	MsgProxy   *network.MsgProxy
-	Room       *Room
+	Room       Room
 }
 
 func (s *Session) Close() {
@@ -34,7 +34,7 @@ func (s *Session) SendProtoMessage(msgId int32, data proto.Message) {
 	s.Conn.Write(pkg.Bytes())
 }
 
-func (s *Session) EntryRoom(room *Room) {
+func (s *Session) EntryRoom(room Room) {
 	s.Room = room
 	room.AddSession(s)
 }

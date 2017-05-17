@@ -30,7 +30,7 @@ func main()  {
 		}
 		session := models.NewSession(conn)
 		// 进入大厅房间
-		session.EntryRoom(models.MainRoom)
+		session.EntryRoom(models.HallRoom)
 		go Gate.Agent(session)
 	}
 }
