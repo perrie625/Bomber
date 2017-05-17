@@ -2,6 +2,7 @@ package gate
 
 import (
 	"Bomber/models"
+	"github.com/name5566/leaf/log"
 )
 
 
@@ -12,8 +13,10 @@ func Agent (session *models.Session){
 	for {
 		// 待完善
 		// 只是单纯实现了proto接收，然后广播字符串
-		rawMsg, err := session.MsgProxy.ReadMsgPacket()
+		rawMsg, err := session.ReadProtoMessage()
 		if err != nil {
+			log.Error(err.Error())
+			log.Error("read proto message error!")
 			return
 		}
 		Route(session, rawMsg)

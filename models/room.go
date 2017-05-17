@@ -44,7 +44,7 @@ func (room *Room) Destroy(){
 func (room *Room) BroadCast(message proto.Message){
 	room.sRWMutex.RLock()
 	for s := range room.sessionMap {
-		s.MsgProxy.WriteMessage(int32(protodata.SaidMessage_ID), message)
+		s.SendProtoMessage(int32(protodata.SaidMessage_ID), message)
 	}
 	room.sRWMutex.RUnlock()
 }

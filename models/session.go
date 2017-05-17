@@ -4,6 +4,7 @@ import (
 	"net"
 	"log"
 	"Bomber/network"
+	"github.com/golang/protobuf/proto"
 )
 
 type Session struct {
@@ -23,10 +24,15 @@ func (s *Session) Close() {
 
 
 
-func (s *Session) ReadMessage() {
-
+func (s *Session) ReadProtoMessage() (*network.RawMessage, error) {
+	return s.MsgProxy.ReadMsgPacket()
 }
 
+
+func (s *Session) SendProtoMessage(msgId int32, data proto.Message) {
+	pkg, _ := s.MsgProxy.MessageToPackage(msgId, data)
+	s.Conn.Write(pkg.Bytes())
+}
 
 func (s *Session) EntryRoom(room *Room) {
 	s.Room = room

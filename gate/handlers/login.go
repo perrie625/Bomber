@@ -20,7 +20,7 @@ func HandleLogin(session *models.Session, rawMsg *network.RawMessage) {
 	println(msg.Password)
 	resp.Flag = protodata.FlagNum_eOk
 	resp.Desc = "haha"
-	session.Room.BroadCast(resp)
+	session.SendProtoMessage(int32(protodata.LoginResponse_ID), resp)
 }
 
 
