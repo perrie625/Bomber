@@ -12,17 +12,17 @@ import (
 
 func HandleChat(session *models.Session, rawMsg *network.RawMessage) {
 	// 一个简单的消息处理
-	var msg *protodata.SayMessage
-	if err := proto.Unmarshal(rawMsg.Data, msg); err != nil {
+	var msg protodata.SayMessage
+	if err := proto.Unmarshal(rawMsg.Data, &msg); err != nil {
 		return
 	}
-	var resp *protodata.SaidMessage
+	var resp protodata.SaidMessage
 	resp.Name = session.GetAddr()
 	now := time.Now()
 	resp.Time = now.Format("2006-01-02 15:04:05")
 	resp.Words = msg.Words
 
-	pkg, _ := session.MsgProxy.MessageToPackage(int32(protodata.SaidMessage_ID), resp)
+	pkg, _ := session.MsgProxy.MessageToPackage(int32(protodata.SaidMessage_ID), &resp)
 	session.Room.BroadCast(pkg.Bytes())
 }
 

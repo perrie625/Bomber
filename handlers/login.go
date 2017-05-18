@@ -11,16 +11,16 @@ import (
 
 func HandleLogin(session *models.Session, rawMsg *network.RawMessage) {
 	// 一个简单的消息处理
-	var msg *protodata.LoginRequest
-	if err := proto.Unmarshal(rawMsg.Data, msg); err != nil {
+	var msg protodata.LoginRequest
+	if err := proto.Unmarshal(rawMsg.Data, &msg); err != nil {
 		return
 	}
-	var resp *protodata.LoginResponse
+	var resp protodata.LoginResponse
 	println(msg.Username)
 	println(msg.Password)
 	resp.Flag = protodata.FlagNum_eOk
 	resp.Desc = "haha"
-	session.SendProtoMessage(int32(protodata.LoginResponse_ID), resp)
+	session.SendProtoMessage(int32(protodata.LoginResponse_ID), &resp)
 }
 
 
