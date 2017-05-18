@@ -6,7 +6,7 @@ import (
 	"os"
 	Gate "Bomber/gate"
 	"Bomber/models"
-	_ "Bomber/gate/handlers"
+	_ "Bomber/handlers"
 	"Bomber/tools"
 )
 
