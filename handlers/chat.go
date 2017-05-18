@@ -21,7 +21,9 @@ func HandleChat(session *models.Session, rawMsg *network.RawMessage) {
 	now := time.Now()
 	resp.Time = now.Format("2006-01-02 15:04:05")
 	resp.Words = msg.Words
-	session.Room.BroadCast(resp)
+
+	pkg, _ := session.MsgProxy.MessageToPackage(int32(protodata.SaidMessage_ID), resp)
+	session.Room.BroadCast(pkg.Bytes())
 }
 
 

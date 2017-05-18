@@ -3,9 +3,6 @@ package models
 import (
 	"log"
 	"sync"
-
-	"github.com/golang/protobuf/proto"
-	"Bomber/protodata"
 )
 
 var (
@@ -15,8 +12,8 @@ var (
 
 type Room interface {
 	RemoveSession(s *Session)
-	BroadCast(message proto.Message)
-	BroadCastOther(*Session, proto.Message)
+	BroadCast([]byte)
+	BroadCastOther(*Session, []byte)
 	AddSession(*Session)
 }
 
@@ -54,21 +51,21 @@ func (room *room) Destroy(){
 	}
 }
 
-func (room *room) BroadCast(message proto.Message){
+func (room *room) BroadCast(b []byte){
 	room.sRWMutex.RLock()
 	for s := range room.sessionMap {
-		s.SendProtoMessage(int32(protodata.SaidMessage_ID), message)
+		s.Conn.Write(b)
 	}
 	room.sRWMutex.RUnlock()
 }
 
 
-func (room *room) BroadCastOther(sender *Session, message proto.Message){
+func (room *room) BroadCastOther(sender *Session, b []byte){
 	// Broadcast message except the sender
 	room.sRWMutex.RLock()
 	for s := range room.sessionMap {
 		if s != sender {
-			s.SendProtoMessage(int32(protodata.SaidMessage_ID), message)
+			s.Conn.Write(b)
 		}
 	}
 	room.sRWMutex.RUnlock()
