@@ -102,8 +102,9 @@ func (mp *MsgProxy) ReadMsgPacket() (*RawMessage, error) {
 		return nil, err
 	}
 	// 获取消息内容
-	msgData := make([]byte, msgLen)
-	if _, err := io.ReadFull(mp.conn, msgData); err != nil {
+	resp := &RawMessage{msgId, make([]byte, msgLen)}
+
+	if _, err := io.ReadFull(mp.conn, resp.Data); err != nil {
 		return nil, err
 	}
 	if err != nil {
@@ -112,13 +113,12 @@ func (mp *MsgProxy) ReadMsgPacket() (*RawMessage, error) {
 
 	// 解密
 	if mp.encrypt {
-		msgData, err = tools.Decrypt(msgData, mp.secret_key)
+		resp.Data, err = tools.Decrypt(resp.Data, mp.secret_key)
 		if err != nil {
 			return nil, err
 		}
 	}
 
-	resp := &RawMessage{msgId, msgData}
 	return resp, err
 
 }
